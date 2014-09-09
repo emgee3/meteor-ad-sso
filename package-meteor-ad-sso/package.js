@@ -14,7 +14,7 @@ Package.on_use(function (api) {
   api.use('tracker', 'client');
 
   api.use('underscore', 'server');
-  api.use('iron:router', 'server');
+  api.use('iron:router@0.9.3', 'server');
 
   api.use('accounts-base', ['client', 'server']);
 
