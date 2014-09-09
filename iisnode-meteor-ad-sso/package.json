@@ -1,0 +1,31 @@
+{
+  "name": "meteor-ad-sso",
+  "version": "0.1.0-pre0",
+  "description": "Active Directory SSO for Meteor, Server Component",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.8.7",
+    "moment": "^2.8.2",
+    "request": "^2.40.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mason Gravitt <hello@gravitronic.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emgee3/meteor-ad-sso.git"
+  },
+  "keywords": [
+    "meteor",
+    "active",
+    "directory",
+    "sso"
+  ],
+  "bugs": {
+    "url": "https://github.com/emgee3/meteor-ad-sso/issues"
+  },
+  "homepage": "https://github.com/emgee3/meteor-ad-sso"
+}

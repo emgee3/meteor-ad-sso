@@ -1,0 +1,9 @@
+{
+  "basePath" : "auth",
+  "apps" : {
+    "default"   : "http://10.0.100.1:3000/ssoauth",
+    "messaging" : "http://10.0.100.2:3000/ssoauth"
+  },
+  "debug" : false,
+  "serverToken" : "5c292f53-3e7e-4d65-89f6-6f316d9b26df"
+}

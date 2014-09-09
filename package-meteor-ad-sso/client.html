@@ -1,0 +1,6 @@
+<template name="adsso">
+  {{#if currentUser}}
+  {{else}}
+    <iframe id="adsso" src="{{ authQueryString }}"></iframe>
+  {{/if}}
+</template>
