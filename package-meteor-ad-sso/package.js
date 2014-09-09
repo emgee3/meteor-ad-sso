@@ -2,7 +2,7 @@ Package.describe({
   name : 'emgee:ad-sso',
   summary: 'Active Directory SSO',
   version: '0.1.0-pre0',
-  git: 'https://github.com/emgee/meteor-ad-sso'
+  git: 'https://github.com/emgee3/meteor-ad-sso.git'
 });
 
 Package.on_use(function (api) {
