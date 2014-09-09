@@ -22,6 +22,8 @@ The same iisnode component may serve multiple Meteor applications.
 * From the IIS manager, add a new site and point it to the iisnode folder.
 * Configure IIS to require Windows Authentication and disable Anonymous Authentication.
 
+![Screenshot of Windows Authentication](https://raw.githubusercontent.com/emgee3/meteor-ad-sso/master/iisnode-meteor-ad-sso/screenshot.png)
+
 ##Configuration
 
 Configuration is set in `config.json`.
@@ -29,9 +31,11 @@ Configuration is set in `config.json`.
     {
       "basePath" : "auth",
       "apps" : {
-        "default"  : "http://10.0.100.1:3000/adauth"
+        "default"   : "http://10.0.100.1:3000/ssoauth",
+        "messaging" : "http://10.0.100.2:3000/ssoauth"
       },
-      "debug" : false
+      "debug" : false,
+      "serverToken" : "5c292f53-3e7e-4d65-89f6-6f316d9b26df"
     }
 
 `basePath` is used to determine the iisnode path. Adjust this to avoid path conflicts as needed.
