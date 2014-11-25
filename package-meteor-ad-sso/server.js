@@ -9,43 +9,45 @@ SSO = {};
 SSO.AuthTokens = {};
 
 // listen for HTTP POST requests on the /ssoauth route
-Router.map(function () {
-  this.route('ssoauth', {
-    where: 'server',
+Router.route('/ssoauth', { where: 'server', name : "ssoauth" })
+  .post(function () {
 
-    action: function () {
-      if (SSO.debug) console.log("Incoming Auth Token\n", this.request.body, "\n\n");
+  if (SSO.debug) console.log("Incoming Auth Token\n", this.request.body, "\n\n");
 
-      // Verify server token
-      if (! this.request.body.hasOwnProperty('serverToken') ||
-          ! this.request.body.serverToken === SSO.serverToken) {
-        if (SSO.debug) console.log("Missing or invalid ServerToken\n");
-        return;
-      }
+  // Verify server token
+  if (! this.request.body.hasOwnProperty('serverToken') ||
+      ! this.request.body.serverToken === SSO.serverToken) {
+    if (SSO.debug) console.log("Missing or invalid ServerToken\n");
+    this.response.writeHead(200, {'Content-Type': 'application/json'});
+    this.response.end("{}");
+    return;
+  }
 
-      // Check to make sure token isn't malformed before adding
-      if (this.request.body.hasOwnProperty('authId') &&
-          this.request.body.hasOwnProperty('username')) {
-        var token = {
-          authId : this.request.body.authId,
-          username : this.request.body.username,
-          authDate : new Date()
-        }
+  // iron:router 1.0 compatiblity
+  if (this.request.body.hasOwnProperty('username[0]'))
+    this.request.body.username = [ this.request.body['username[0]'], this.request.body['username[1]'] ];
 
-        SSO.AuthTokens[this.request.body.authId] = token;
-      }
-
-      // Clean up auth tokens by removing any over 10 minutes old
-      var expired = new Date(new Date().getTime() - 10 * 60 * 1000);
-
-      _.each(SSO.AuthTokens, function (token) {
-        if (token.authDate < expired) delete SSO.AuthTokens[token.authId];
-      });
-
-      this.response.writeHead(200, {'Content-Type': 'application/json'});
-      this.response.end("{}");
+  // Check to make sure token isn't malformed before adding
+  if (this.request.body.hasOwnProperty('authId') &&
+      this.request.body.hasOwnProperty('username')) {
+    var token = {
+      authId : this.request.body.authId,
+      username : this.request.body.username,
+      authDate : new Date()
     }
+
+    SSO.AuthTokens[this.request.body.authId] = token;
+  }
+
+  // Clean up auth tokens by removing any over 10 minutes old
+  var expired = new Date(new Date().getTime() - 10 * 60 * 1000);
+
+  _.each(SSO.AuthTokens, function (token) {
+    if (token.authDate < expired) delete SSO.AuthTokens[token.authId];
   });
+
+  this.response.writeHead(200, {'Content-Type': 'application/json'});
+  this.response.end("{}");
 });
 
 
@@ -140,3 +142,6 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
   };
 });
 
+Router.onBeforeAction(Iron.Router.bodyParser.urlencoded({
+  extended: false
+}));

@@ -11,19 +11,21 @@ Session.setDefault("adsso.timesRefreshed", 0);
 
 
 
-Template.adsso.authQueryString = function () {
-  // Build the URL for the iframe
-  var env = __meteor_runtime_config__.ROOT_URL;
-  var url;
+Template.adsso.helpers ({
+  authQueryString : function () {
+    // Build the URL for the iframe
+    var env = __meteor_runtime_config__.ROOT_URL;
+    var url;
 
-  if (env.indexOf('localhost') === -1 && env.indexOf('127.0') === -1) {
-    url = SSO.authUrl + SSO.authApp + "/" + Session.get("adsso.authId");
-  } else {
-    url = SSO.devAuthUrl + SSO.devAuthApp + "/" + Session.get("adsso.authId");
+    if (env.indexOf('localhost') === -1 && env.indexOf('127.0') === -1) {
+      url = SSO.authUrl + SSO.authApp + "/" + Session.get("adsso.authId");
+    } else {
+      url = SSO.devAuthUrl + SSO.devAuthApp + "/" + Session.get("adsso.authId");
+    }
+
+    return url;
   }
-
-  return url;
-};
+});
 
 
 Template.adsso.rendered = function () {

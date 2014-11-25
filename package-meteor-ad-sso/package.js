@@ -1,12 +1,12 @@
 Package.describe({
   name : 'emgee:ad-sso',
   summary: 'Active Directory SSO',
-  version: '0.1.0-pre0',
+  version: '0.1.0-pre1',
   git: 'https://github.com/emgee3/meteor-ad-sso.git'
 });
 
 Package.on_use(function (api) {
-  api.versionsFrom('METEOR@0.9.1.1');
+  api.versionsFrom('METEOR@1.0');
 
   api.use('templating', 'client');
   api.use('jquery', 'client');
@@ -14,7 +14,7 @@ Package.on_use(function (api) {
   api.use('tracker', 'client');
 
   api.use('underscore', 'server');
-  api.use('iron:router@0.9.3', 'server');
+  api.use('iron:router@1.0.3');
 
   api.use('accounts-base', ['client', 'server']);
 

@@ -9,6 +9,11 @@ try {
   var config = null;
 }
 
+try {
+  var path = require('path');
+  fs.mkdirSync(path.resolve(__dirname, "iisnode"));
+} catch (e) {}
+
 var express = require('express');
 var http = require('http');
 var util = require('util');
