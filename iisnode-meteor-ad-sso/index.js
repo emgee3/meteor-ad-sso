@@ -24,7 +24,7 @@ var app = express();
 if (config) {
   app.get("/" + config.basePath + "/done", function (req, res) {
     res.writeHead(200, { 'Content-Type' : 'application/json' });
-    res.end();
+    res.end('[]');
     if (config.debug) console.error('Completed authentication');
   });
 
