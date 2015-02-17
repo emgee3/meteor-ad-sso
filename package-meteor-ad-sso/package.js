@@ -10,22 +10,15 @@ Npm.depends({ "chalk" : "0.5.1" });
 Package.on_use(function (api) {
   api.versionsFrom("METEOR@1.0.3.1");
 
-  api.use("templating", "client");
-  api.use("jquery", "client");
-  api.use("session", "client");
-  api.use("tracker", "client");
-  api.use("reactive-var", "client");
-
-  api.use("underscore", "server");
   api.use("iron:router@1.0.7");
+
+  api.use(["templating", "jquery", "session", "tracker", "reactive-var"], "client");
+  api.use("underscore", "server");
 
   api.use("accounts-base", ["client", "server"]);
 
-  api.add_files("client.css", "client");
-  api.add_files("client.html", "client");
-  api.add_files("client.js", "client");
-
-  api.add_files("server.js", "server");
+  api.add_files(["adsso-client.js", "adsso.css", "adsso.html"], "client");
+  api.add_files("adsso-server.js", "server");
 
   api.export("SSO", ["client", "server"]);
 });
