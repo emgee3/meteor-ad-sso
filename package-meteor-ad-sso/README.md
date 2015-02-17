@@ -1,17 +1,20 @@
-#Active Directory SSO for Meteor
+# Active Directory SSO for Meteor
+### Active Directory Single Sign On Authentication and Authorization for Meteor
 
-Active Directory Single Sign On Authentication and Authorization for Meteor
+This smart package is one of two pieces needed to provide Active Directory SSO for Meteor.
+You must have [iisnode](https://github.com/tjanczuk/iisnode) installed on a Windows computer,
+with the [meteor-ad-sso](https://www.npmjs.com/package/meteor-ad-sso) component.
 
-##Meteor package
+## Meteor package
 
 ### Installation
 
     meteor add emgee:ad-sso
 
-###Configuration
+### Configuration
 There is some config required on the client and server.
 
-######server/sso.js
+###### server/sso.js
 
     SSO.debug        = false;
     SSO.createUsers  = true;
@@ -41,7 +44,7 @@ administrative rights. If this is an async function, wrap with with `Meteor.wrap
 `SSO.serverToken` is a string that the IIS module provides, which prevents a HTTP posts from an
 attacker.
 
-######client/sso.js
+###### client/sso.js
 
     SSO.devAuthUrl = "http://dev.windows.domain/auth";
     SSO.authUrl    = "http://windows.domain/auth";

@@ -1,8 +1,8 @@
-#Active Directory SSO for Meteor
+# Active Directory SSO for Meteor
 
 Active Directory Single Sign On Authentication and Authorization for Meteor
 
-###IIS SSO component
+### IIS SSO component
 
 This component runs inside Internet Information Server on a Microsoft Windows
 domain. It uses Tomasz Janczuk's [iisnode](https://github.com/tjanczuk/iisnode) to integrate the node
@@ -12,7 +12,7 @@ will be passed to the appropriate Meteor server.
 
 The same iisnode component may serve multiple Meteor applications.
 
-##Install
+## Install
 
 * Install IIS and iisnode ([instructions](https://github.com/tjanczuk/iisnode#hosting-nodejs-applications-in-iis-on-windows))
 * Install the IIS rewrite module if not already done.
@@ -24,7 +24,7 @@ The same iisnode component may serve multiple Meteor applications.
 
 ![Screenshot of Windows Authentication](https://raw.githubusercontent.com/emgee3/meteor-ad-sso/master/iisnode-meteor-ad-sso/screenshot.png)
 
-##Configuration
+## Configuration
 
 Configuration is set in `config.json`.
 
@@ -46,5 +46,5 @@ Meteor app, to notify it.
 
 `debug` enables some `console.log`ing which can be viewed at `http://server/basepath/iisnode`.
 
-##License
+## License
 MIT
