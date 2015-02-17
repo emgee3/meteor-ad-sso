@@ -1,6 +1,6 @@
 {
   "name": "meteor-ad-sso",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Active Directory SSO for Meteor, Server Component",
   "main": "index.js",
   "dependencies": {
