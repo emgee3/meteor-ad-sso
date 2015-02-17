@@ -1,9 +1,3 @@
-//
-// Active Directory SSO for Meteor
-// © 2014 Mason Gravitt
-// MIT licensed
-//
-
 SSO = {};
 
 SSO.AuthTokens = {};
@@ -12,7 +6,7 @@ SSO.AuthTokens = {};
 Router.route('/ssoauth', { where: 'server', name : "ssoauth" })
   .post(function () {
 
-  if (SSO.debug) console.log("Incoming Auth Token\n", this.request.body, "\n\n");
+  Log("Incoming Auth Token", this.request.body);
 
   // Verify server token
   if (! this.request.body.hasOwnProperty('serverToken') ||
@@ -60,7 +54,7 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
 
   var userId;
 
-  if (SSO.debug) console.log("Processing loginRequest:", JSON.stringify(loginRequest), "\n");
+  Log("Processing loginRequest", loginRequest);
 
   loginRequest = loginRequest || {};
 
@@ -68,13 +62,13 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
   // a SSO login attempt. Return undefined to let Meteor attempt login
   // with a different handler.
   if (! loginRequest.hasOwnProperty("authId")) {
-    if (SSO.debug) console.log("Malformed auth Request\n");
+    Log("Malformed auth Request", loginRequest);
     return undefined;
   }
 
   // Check that the authId is in the AuthTokens dictionary
   if (! SSO.AuthTokens.hasOwnProperty(loginRequest.authId)) {
-    if (SSO.debug) console.log("No auth token\n");
+    Log("No auth token", loginRequest);
     return undefined;
   }
 
@@ -93,39 +87,57 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
 
   // If a user accounte exists, look up the user's _id
   if (user) {
-    if (SSO.debug) console.log("User account for", domain, "/", username, "found\n");
+    Log("No user account for", domain + "/" + username);
     userId = user._id;
 
   } else {
 
     // No Meteor Account has been found. Check if we're supposed to make one
-    if (! SSO.createUsers)
+    if (! SSO.createUsers) {
+      Log("Not creating user account", domain + "/" + username);
       return {
-        error : new Meteor.Error(401, "Configured to not create new accounts")
+        error : new Meteor.Error("Configured to not create new accounts")
       };
+    }
 
-    if (SSO.debug) console.log("Creating user account for", domain, "/", username, "\n");
+    Log("Creating user account for", domain + "/" + username);
 
     // Create the username we'll use to a
     var accountProps = {
       username : domain + "/" + username
     };
 
+    Log("Creating account with settings", accountProps);
+
     // If there is a custom account property function, use it to extend the
     // account properties.
-    if (SSO.getUserProps) {
+
+    if (_.isFunction(SSO.getUserProps)) {
+
+      Log("Extending account properties");
+
       accountProps = _.extend(accountProps, SSO.getUserProps({
         username : username,
         domain : domain
       }));
+
+    } else {
+      Log("Not extending account properties");
     }
 
-    if (SSO.debug) console.log("Creating account with", JSON.stringify(accountProps), "\n");
+    Log("Creating account with", accountProps);
 
-    userId = Accounts.createUser(accountProps);
+    try {
+      userId = Accounts.createUser(accountProps);
+    } catch (e) {
+      console.error(e);
+    }
+
+    Log("Account created with ID", userId);
 
     // Not all the properties were added to the user account. Delete the ones added.
     delete accountProps.username;
+
     if (accountProps.hasOwnProperty('profile'))
       delete accountProps.profile;
 
@@ -142,6 +154,16 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
   };
 });
 
+
 Router.onBeforeAction(Iron.Router.bodyParser.urlencoded({
   extended: false
 }));
+
+
+var chalk = Npm.require('chalk');
+
+function Log(t, d) {
+  if (! SSO.debug) return;
+
+  console.log(chalk.bold(t + ": "), d);
+}
