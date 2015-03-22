@@ -1,7 +1,7 @@
 Package.describe({
   name : "emgee:ad-sso",
   summary: "Active Directory SSO",
-  version: "0.1.2",
+  version: "0.1.3",
   git: "https://github.com/emgee3/meteor-ad-sso.git",
   documentation: "README.md"
 });
@@ -10,6 +10,7 @@ Npm.depends({ "chalk" : "0.5.1" });
 
 Package.onUse(function (api) {
   api.versionsFrom("METEOR@1.0.3.1");
+  api.versionsFrom("METEOR@1.0.4.2");
 
   api.use("templating", "client");
   api.use("jquery", "client");
