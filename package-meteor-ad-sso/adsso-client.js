@@ -25,11 +25,24 @@ Template.adsso.rendered = function () {
 
 
 Tracker.autorun(function () {
+  if (Meteor.user()) return;
   if (timesRefreshed.get() > 0) {
-    Accounts.callLoginMethod({
-      methodArguments: [
-        { authId : authId }
-      ]
-    });
+    SSO.login();
   }
 });
+
+
+SSO.login = function () {
+  Accounts.callLoginMethod({
+    methodArguments: [
+      { authId : authId }
+    ],
+    userCallback : function (err, res) {
+      if (err) {
+        if (typeof SSO.onError === "function") SSO.onError(err);
+      } else {
+        if (typeof SSO.onSuccess === "function") SSO.onSuccess(res);
+      }
+    }
+  });
+}

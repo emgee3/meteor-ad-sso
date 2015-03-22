@@ -50,6 +50,13 @@ attacker.
     SSO.authUrl    = "http://windows.domain/auth";
     SSO.devAuthApp = "dev";
     SSO.authApp    = "messaging";
+    SSO.onError    = function (e) { console.log(e); }
+    // SSO.onError    = function (e) {
+    //   if (e.error === "Configured to not create new accounts") {
+    //     Router.go('/noaccount');
+    //   }
+    // }
+    SSO.onSuccess  = function (res) { ... }
 
 The IIS component communicates with the Meteor server via HTTP POST, and supports authetication
 to multiple Meteor applications simultaneously. Set the above strings to determing which Meteor
