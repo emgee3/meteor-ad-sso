@@ -34,6 +34,7 @@ Tracker.autorun(function () {
 
 SSO.login = function () {
   Accounts.callLoginMethod({
+    methodName : "adsso",
     methodArguments: [
       { authId : authId }
     ],
