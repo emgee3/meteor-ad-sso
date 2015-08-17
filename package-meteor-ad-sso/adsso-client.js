@@ -39,7 +39,11 @@ SSO.login = function () {
     ],
     userCallback : function (err, res) {
       if (err) {
-        if (typeof SSO.onError === "function") SSO.onError(err);
+        if (typeof SSO.onError === "function")  {
+          SSO.onError(err);
+        } else {
+          console.error(err);
+        }
       } else {
         if (typeof SSO.onSuccess === "function") SSO.onSuccess(res);
       }

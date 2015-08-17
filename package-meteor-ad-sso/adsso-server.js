@@ -11,7 +11,7 @@ Router.route('/ssoauth', { where: 'server', name : "ssoauth" })
   // Verify server token
   if (! this.request.body.hasOwnProperty('serverToken') ||
       ! this.request.body.serverToken === SSO.serverToken) {
-    if (SSO.debug) console.log("Missing or invalid ServerToken\n");
+    Log("Missing or invalid ServerToken\n");
     this.response.writeHead(200, {'Content-Type': 'application/json'});
     this.response.end("{}");
     return;
@@ -87,7 +87,7 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
 
   // If a user accounte exists, look up the user's _id
   if (user) {
-    Log("No user account for", domain + "/" + username);
+    Log("Found user account for", domain + "/" + username);
     userId = user._id;
 
   } else {

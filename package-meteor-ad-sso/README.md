@@ -12,7 +12,12 @@ with the [meteor-ad-sso](https://www.npmjs.com/package/meteor-ad-sso) component.
     meteor add emgee:ad-sso
 
 ### Configuration
+
 There is some config required on the client and server.
+
+###### Template
+
+Put `{{> adsso}}` in a template to activate SSO.
 
 ###### server/sso.js
 
