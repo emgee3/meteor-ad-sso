@@ -35,7 +35,7 @@ Configuration is set in `config.json`.
         "messaging" : "http://10.0.100.2:3000/ssoauth"
       },
       "debug" : false,
-      "serverToken" : "5c292f53-3e7e-4d65-89f6-6f316d9b26df"
+      "serverToken" : "A unique string to authenticate the HTTP POST sent by the server. PLEASE CHANGE THIS!!!"
     }
 
 `basePath` is used to determine the iisnode path. Adjust this to avoid path conflicts as needed.
@@ -45,6 +45,8 @@ Authentication has been established. Each app should have a unique name, and a p
 Meteor app, to notify it.
 
 `debug` enables some `console.log`ing which can be viewed at `http://server/basepath/iisnode`.
+
+`serverToken` is a string that the Meteor server checks, which prevents a HTTP posts from an attacker.
 
 ## License
 MIT
