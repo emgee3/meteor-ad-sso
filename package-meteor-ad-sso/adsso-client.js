@@ -1,34 +1,22 @@
 SSO = {};
 
 var authId = Meteor.uuid();
-var timesRefreshed = new ReactiveVar();
 
-Template.adsso.helpers ({
-  authQueryString : function () {
-    // Build the URL for the iframe
-    var env = __meteor_runtime_config__.ROOT_URL;
-    var isProd = env.indexOf('localhost') === -1 && env.indexOf('127.0') === -1;
+Meteor.startup(function () {
+  var env = __meteor_runtime_config__.ROOT_URL;
+  var isProd = env.indexOf('localhost') === -1 && env.indexOf('127.0') === -1;
 
-    return (isProd ? SSO.authUrl + SSO.authApp : SSO.devAuthUrl + SSO.devAuthApp)
-              + "/" + authId;
-  }
-});
+  var src = (isProd ? SSO.authUrl + SSO.authApp : SSO.devAuthUrl + SSO.devAuthApp) + "/" + authId + "?q=" + Random.id();
 
+  var $iframe = $('<iframe></iframe>')
+    .attr('style', 'display: none')
+    .attr('src', src)
+    .load(function () {
+      if (Meteor.user()) return;
+      SSO.login();
+    });
 
-Template.adsso.rendered = function () {
-  timesRefreshed.set(0);
-
-  $("iframe").load(function(){
-    timesRefreshed.set(timesRefreshed.get() + 1);
-  });
-};
-
-
-Tracker.autorun(function () {
-  if (Meteor.user()) return;
-  if (timesRefreshed.get() > 0) {
-    SSO.login();
-  }
+  $('body').append($iframe);
 });
 
 

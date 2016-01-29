@@ -1,36 +1,47 @@
+var bodyParser = Npm.require("body-parser");
+
 SSO = {};
 
 SSO.AuthTokens = {};
 
-// listen for HTTP POST requests on the /ssoauth route
-Router.route('/ssoauth', { where: 'server', name : "ssoauth" })
-  .post(function () {
+Picker.middleware(bodyParser.json());
+Picker.middleware(bodyParser.urlencoded({extended: true}));
 
-  Log("Incoming Auth Token", this.request.body);
+// listen for HTTP POST requests on the /ssoauth route
+Picker.route('/ssoauth', function(params, req, res, next) {
+
+  log("Incoming Auth Token", req.body);
+
+  if (req.method !== 'POST') {
+    log("Only method supported is POST");
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end("{}");
+    return;
+  }
 
   // Verify server token
-  if (! this.request.body.hasOwnProperty('serverToken') ||
-      ! this.request.body.serverToken === SSO.serverToken) {
-    Log("Missing or invalid ServerToken\n");
-    this.response.writeHead(200, {'Content-Type': 'application/json'});
-    this.response.end("{}");
+  if (! req.body.hasOwnProperty('serverToken') ||
+      ! req.body.serverToken === SSO.serverToken) {
+    log("Missing or invalid ServerToken");
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end("{}");
     return;
   }
 
   // iron:router 1.0 compatiblity
-  if (this.request.body.hasOwnProperty('username[0]'))
-    this.request.body.username = [ this.request.body['username[0]'], this.request.body['username[1]'] ];
+  if (req.body.hasOwnProperty('username[0]'))
+    req.body.username = [ req.body['username[0]'], req.body['username[1]'] ];
 
   // Check to make sure token isn't malformed before adding
-  if (this.request.body.hasOwnProperty('authId') &&
-      this.request.body.hasOwnProperty('username')) {
+  if (req.body.hasOwnProperty('authId') &&
+      req.body.hasOwnProperty('username')) {
     var token = {
-      authId : this.request.body.authId,
-      username : this.request.body.username,
+      authId : req.body.authId,
+      username : req.body.username,
       authDate : new Date()
     }
 
-    SSO.AuthTokens[this.request.body.authId] = token;
+    SSO.AuthTokens[req.body.authId] = token;
   }
 
   // Clean up auth tokens by removing any over 10 minutes old
@@ -40,8 +51,8 @@ Router.route('/ssoauth', { where: 'server', name : "ssoauth" })
     if (token.authDate < expired) delete SSO.AuthTokens[token.authId];
   });
 
-  this.response.writeHead(200, {'Content-Type': 'application/json'});
-  this.response.end("{}");
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  res.end("{}");
 });
 
 
@@ -54,7 +65,7 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
 
   var userId;
 
-  Log("Processing loginRequest", loginRequest);
+  log("Processing loginRequest", loginRequest);
 
   loginRequest = loginRequest || {};
 
@@ -62,13 +73,13 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
   // a SSO login attempt. Return undefined to let Meteor attempt login
   // with a different handler.
   if (! loginRequest.hasOwnProperty("authId")) {
-    Log("Malformed auth Request", loginRequest);
+    log("Malformed auth Request", loginRequest);
     return undefined;
   }
 
   // Check that the authId is in the AuthTokens dictionary
   if (! SSO.AuthTokens.hasOwnProperty(loginRequest.authId)) {
-    Log("No auth token", loginRequest);
+    log("No auth token", loginRequest);
     return undefined;
   }
 
@@ -87,34 +98,34 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
 
   // If a user accounte exists, look up the user's _id
   if (user) {
-    Log("Found user account for", domain + "/" + username);
+    log("Found user account for", domain + "/" + username);
     userId = user._id;
 
   } else {
 
     // No Meteor Account has been found. Check if we're supposed to make one
     if (! SSO.createUsers) {
-      Log("Not creating user account", domain + "/" + username);
+      log("Not creating user account", domain + "/" + username);
       return {
         error : new Meteor.Error("Configured to not create new accounts")
       };
     }
 
-    Log("Creating user account for", domain + "/" + username);
+    log("Creating user account for", domain + "/" + username);
 
     // Create the username we'll use to a
     var accountProps = {
       username : domain + "/" + username
     };
 
-    Log("Creating account with settings", accountProps);
+    log("Creating account with settings", accountProps);
 
     // If there is a custom account property function, use it to extend the
     // account properties.
 
     if (_.isFunction(SSO.getUserProps)) {
 
-      Log("Extending account properties");
+      log("Extending account properties");
 
       accountProps = _.extend(accountProps, SSO.getUserProps({
         username : username,
@@ -122,10 +133,10 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
       }));
 
     } else {
-      Log("Not extending account properties");
+      log("Not extending account properties");
     }
 
-    Log("Creating account with", accountProps);
+    log("Creating account with", accountProps);
 
     try {
       userId = Accounts.createUser(accountProps);
@@ -133,7 +144,7 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
       console.error(e);
     }
 
-    Log("Account created with ID", userId);
+    log("Account created with ID", userId);
 
     // Not all the properties were added to the user account. Delete the ones added.
     delete accountProps.username;
@@ -155,15 +166,8 @@ Accounts.registerLoginHandler("adsso", function (loginRequest) {
 });
 
 
-Router.onBeforeAction(Iron.Router.bodyParser.urlencoded({
-  extended: false
-}));
-
-
-var chalk = Npm.require('chalk');
-
-function Log(t, d) {
+function log() {
   if (! SSO.debug) return;
 
-  console.log(chalk.bold(t + ": "), d);
+  (console.log).apply(console, arguments);
 }
