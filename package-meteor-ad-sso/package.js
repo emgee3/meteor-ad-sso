@@ -14,8 +14,6 @@ Package.onUse(function (api) {
   api.versionsFrom("METEOR@1.2.1");
 
   api.use("jquery", "client");
-  api.use("tracker", "client");
-  api.use("reactive-var", "client");
 
   api.use("underscore", "server");
   api.use("meteorhacks:picker@1.0.3");
